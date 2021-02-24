@@ -34,11 +34,11 @@ void phg::BruteforceMatcher::knnMatch(const cv::Mat &query_desc,
     const cv::Mat &train_desc = *train_desc_ptr;
     const int n_train_desc = train_desc.rows;
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int qi = 0; qi < ndesc; ++qi) {
         std::vector<cv::DMatch> &dst = matches[qi];
         dst.clear();
-        dst.reserve(2);
+        dst.reserve(k);
 
         for (int ti = 0; ti < n_train_desc; ++ti) {
             cv::DMatch match;
