@@ -248,6 +248,9 @@ cv::Point2d phg::transformPoint(const cv::Point2d &pt, const cv::Mat &T)
     double y = transform_point.at<double>(1);
     double w = transform_point.at<double>(2);
     //Надо ли делать проверку на деление на нуль?
+    if (w == 0) {
+        throw std::runtime_error("H33 = 0");
+    }
     return cv::Point2d(x / w, y / w);
 }
 

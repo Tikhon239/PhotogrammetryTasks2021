@@ -6,8 +6,8 @@
 phg::FlannMatcher::FlannMatcher()
 {
     // параметры для приближенного поиска
-    index_params = flannKdTreeIndexParams(4);
-    search_params = flannKsTreeSearchParams(32);
+    index_params = flannKdTreeIndexParams(10);
+    search_params = flannKsTreeSearchParams(10);
 }
 
 void phg::FlannMatcher::train(const cv::Mat &train_desc)
