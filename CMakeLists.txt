@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
+set(CMAKE_MACOSX_RPATH 1)
 
 add_subdirectory(libs)
 
