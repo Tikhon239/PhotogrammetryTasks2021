@@ -26,7 +26,7 @@
 // TODO и раскомментируйте вызов runBA ниже
 
 // TODO когда заработает при малом количестве фотографий - увеличьте это ограничение до 100 чтобы попробовать обработать все фотографии (если же успешно будут отрабаывать только N фотографий - отправьте PR выставив здесь это N)
-#define NIMGS_LIMIT                           10 // сколько фотографий обрабатывать (можно выставить меньше чтобы ускорить экспериментирование, или в случае если весь датасет не выравнивается)
+#define NIMGS_LIMIT                           16 // сколько фотографий обрабатывать (можно выставить меньше чтобы ускорить экспериментирование, или в случае если весь датасет не выравнивается)
 #define INTRINSICS_CALIBRATION_MIN_IMGS       5 // начиная со скольки камер начинать оптимизировать внутренние параметры камеры (фокальную длинну и т.п.) - из соображений что "пока камер мало - наблюдений может быть недостаточно чтобы не сойтись к ложной внутренней модели камеры"
 
 #define ENABLE_INSTRINSICS_K1_K2              1 // TODO учитывать ли радиальную дисторсию - коэффициенты k1, k2 попробуйте с ним и и без saharov32, заметна ли разница?
@@ -49,9 +49,9 @@
 // скачайте их фотографии в папку data/src/datasets/DATASETNAME/ по ссылке из файла LINK.txt в папке датасета:
 
 // saharov32 и herzjesu25 - приятные датасеты, вероятно их оба получится выравнять целиком
-//#define DATASET_DIR                  "herzjesu25"
-//#define DATASET_DOWNSCALE            2 // для ускорения SIFT
-//#define DATASET_F                    (2761.5 / DATASET_DOWNSCALE) // see herzjesu25/K.txt
+#define DATASET_DIR                  "herzjesu25"
+#define DATASET_DOWNSCALE            2 // для ускорения SIFT
+#define DATASET_F                    (2761.5 / DATASET_DOWNSCALE) // see herzjesu25/K.txt
 // TODO почему фокальная длина меняется от того что мы уменьшаем картинку? почему именно в такой пропорции? может надо домножать? или делить на downscale^2 ?
 
 // но temple47 - не вышло, я не разобрался в чем с ним проблема, может быть слишком мало точек, может критерии фильтрации выкидышей для него слишком строги
@@ -679,9 +679,15 @@ void runBA(std::vector<vector3d> &tie_points,
                 }
             }
 
-            if (ENABLE_OUTLIERS_FILTRATION_COLINEAR && ENABLE_BA) {
+            if (ENABLE_OUTLIERS_FILTRATION_COLINEAR && ENABLE_BA && ci > 0) {
                 // TODO выполните проверку случая когда два луча почти параллельны, чтобы не было странных точек улетающих на бесконечность (например чтобы угол был хотя бы 2.5 градуса)
-                // should_be_disabled = true;
+                vector3d first_camera_origin;
+                phg::decomposeUndistortedPMatrix(R, first_camera_origin, cameras[0]);
+                vector3d ray_first = cv::normalize(track_point - first_camera_origin);
+                vector3d ray_current = cv::normalize(track_point - camera_origin);
+                if (ray_first.dot(ray_current) > 0.999 /*cos(2.5)*/) {
+                    should_be_disabled = true;
+                }
             }
 
             {

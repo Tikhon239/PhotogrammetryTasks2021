@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
+set(CMAKE_MACOSX_RPATH 1)
 
 add_subdirectory(libs)
 
@@ -6,14 +7,14 @@ project(Photogrammetry)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# OpenMP позволит распараллеливать циклы на все ядра процессора простыми директивами
-find_package(OpenMP)
-if (OpenMP_CXX_FOUND)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-else()
-    message(FATAL_ERROR "OpenMP not found! You need OpenMP for speedup on multicore CPUs!")
-endif()
+## OpenMP позволит распараллеливать циклы на все ядра процессора простыми директивами
+#find_package(OpenMP)
+#if (OpenMP_CXX_FOUND)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+#else()
+#    message(FATAL_ERROR "OpenMP not found! You need OpenMP for speedup on multicore CPUs!")
+#endif()
 
 find_package(OpenCV 4.5.1 REQUIRED)
 #      Linux:
